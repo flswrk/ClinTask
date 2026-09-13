@@ -113,7 +113,7 @@
 /* ── BASE ──────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
 html, body { height:100%; background:var(--surface); color:var(--on-surface); font-family:var(--f); -webkit-font-smoothing:antialiased; touch-action:manipulation; }
-body { padding-top:env(safe-area-inset-top); padding-bottom:calc(80px + env(safe-area-inset-bottom)); }
+body { padding-top:env(safe-area-inset-top); padding-bottom:calc(100px + env(safe-area-inset-bottom)); }
 button, input, select, textarea { font-family:var(--f); touch-action:manipulation; }
 button { cursor:pointer; }
 
@@ -122,6 +122,8 @@ button { cursor:pointer; }
 .nav-in { max-width:980px; margin:0 auto; padding:0 20px; height:60px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .wm-a { font-size:16px; font-weight:700; letter-spacing:0; color:#000; display:block; line-height:1.2; }
 .wm-b { font-size:11px; font-weight:400; letter-spacing:.1px; color:var(--muted); display:block; margin-top:1px; }
+.offline-badge { font-size:11px; font-weight:500; letter-spacing:.1px; color:var(--success); text-align:right; white-space:nowrap; flex-shrink:0; }
+.offline-badge.off { color:var(--warning); }
 .page-name { font-size:13px; font-weight:500; letter-spacing:.1px; color:var(--on-primary-container); text-align:right; white-space:nowrap; background:var(--primary-container); padding:6px 14px; border-radius:var(--r-full); }
 
 /* ── NAV (BOTTOM) — Material navigation bar ─────────────── */
@@ -157,7 +159,10 @@ button { cursor:pointer; }
 .sec-line { flex:1; height:1px; background:var(--outline-variant); }
 .sec-cnt { font-size:12px; font-weight:500; color:var(--muted); padding:4px 10px; background:var(--surface-container); border-radius:var(--r-full); }
 
-/* ── SCORE BADGE — circular Material tonal badge ────────── */
+/* ── SCORE BADGE — circular Material tonal badge, with a
+      conic-gradient progress ring showing score/100 ────── */
+.score-ring { position:relative; flex-shrink:0; width:44px; height:44px; border-radius:50%; background:conic-gradient(var(--ring-c) calc(var(--pct) * 3.6deg), var(--outline-variant) 0deg); }
+.score-ring .score.lg, .score-ring .score.sm { position:absolute; inset:2px; width:auto; height:auto; }
 .score { flex-shrink:0; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; }
 .score.hi { background:var(--success-container); color:var(--on-success-container); }
 .score.md { background:var(--warning-container); color:var(--on-warning-container); }
@@ -199,7 +204,7 @@ button { cursor:pointer; }
 .tc-hd { border-bottom:1px solid var(--outline-variant); padding:10px 16px; display:flex; align-items:center; justify-content:space-between; background:var(--surface-container); }
 .tc-hd-lbl { font-size:12px; font-weight:500; letter-spacing:.1px; color:var(--muted); }
 .tc-body { padding:16px; }
-.tc-title { font-size:16px; font-weight:500; letter-spacing:0; line-height:1.3; }
+.tc-title { font-size:16px; font-weight:700; letter-spacing:0; line-height:1.3; }
 .tc.done-card .tc-title { color:var(--muted); text-decoration:line-through; font-weight:400; }
 .tc-meta { margin-bottom:10px; margin-top:8px; }
 .tc-actions { display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap; }
@@ -221,7 +226,7 @@ button { cursor:pointer; }
 .focus-inner { max-width:640px; width:100%; margin:0 auto; padding:24px 20px; }
 .focus-card  { border:1px solid var(--outline-variant); border-radius:var(--r-lg); background:var(--surface-lowest); box-shadow:var(--e1); overflow:hidden; }
 .focus-hd    { padding:12px 16px; background:var(--surface-lowest); display:flex; align-items:center; justify-content:space-between; gap:10px; }
-.focus-hd-title { font-family:var(--f); font-size:19px; font-weight:500; letter-spacing:0; line-height:1.3; color:var(--on-surface); }
+.focus-hd-title { font-family:var(--f); font-size:19px; font-weight:700; letter-spacing:0; line-height:1.3; color:var(--on-surface); }
 .focus-body  { padding:14px 16px; }
 .focus-btns  { display:flex; gap:8px; flex-wrap:wrap; }
 .focus-btns .btn { flex:1 1 auto; min-width:0; text-align:center; padding:7px 14px; }
@@ -244,7 +249,7 @@ button { cursor:pointer; }
 .bl-row.dn { background:var(--surface-low); box-shadow:none; border-color:var(--outline-variant); }
 .bl-row.dn:hover { box-shadow:var(--e1); }
 .bl-mid { min-width:0; }
-.bl-title { font-size:15px; font-weight:500; letter-spacing:0; margin-bottom:6px; line-height:1.3; }
+.bl-title { font-size:15px; font-weight:700; letter-spacing:0; margin-bottom:6px; line-height:1.3; }
 .bl-row.dn .bl-title { color:var(--muted); text-decoration:line-through; font-weight:400; }
 
 /* SCORE LEGEND */
@@ -310,11 +315,9 @@ select.fi:hover { background-color:var(--surface-low); }
 #ov2 { display:none; position:fixed; inset:0; background:rgba(28,49,66,.4); z-index:200; align-items:center; justify-content:center; padding:16px; }
 #ov2.on { display:flex; }
 #promo { background:var(--surface-lowest); border-radius:var(--r-xl); box-shadow:var(--e3); width:100%; max-width:360px; max-height:80vh; overflow-y:auto; }
-.promo-hd    { padding:18px 20px 14px; background:var(--primary-container); }
-.promo-hd.green { background:var(--success-container); }
-.promo-hd.green .promo-ey, .promo-hd.green .promo-title { color:var(--on-success-container); }
-.promo-ey    { font-size:12px; font-weight:500; letter-spacing:.1px; color:var(--on-primary-container); opacity:.75; }
-.promo-title { font-size:17px; font-weight:500; color:var(--on-primary-container); margin-top:3px; }
+.promo-hd    { padding:18px 20px 14px; background:var(--success-container); }
+.promo-ey    { font-size:12px; font-weight:500; letter-spacing:.1px; color:var(--on-success-container); opacity:.75; }
+.promo-title { font-size:17px; font-weight:500; color:var(--on-success-container); margin-top:3px; }
 .promo-list  { padding:10px; display:flex; flex-direction:column; gap:6px; }
 .promo-item  { border-radius:var(--r-md); background:var(--surface); padding:11px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; transition:background .12s; }
 .promo-item:hover { background:var(--surface-container); }
@@ -342,9 +345,10 @@ select.fi:hover { background-color:var(--surface-low); }
 <nav id="nav">
   <div class="nav-in">
     <div>
-      <span class="wm-a">Flosswork Dental Clinic</span>
-      <span class="wm-b">Clearly Better.</span>
+      <span class="wm-a">Flosswork Tasks</span>
+      <span class="wm-b" id="wm-date"></span>
     </div>
+    <span class="offline-badge" id="offline-badge">● Online</span>
   </div>
 </nav>
 
@@ -364,12 +368,15 @@ select.fi:hover { background-color:var(--surface-low); }
     <div class="fbar-in">
       <select class="sel" id="sel-cat">
         <option value="All">All Categories</option>
-        <option value="Clinical">Clinical</option>
-        <option value="Finance">Finance</option>
-        <option value="Operations">Operations</option>
-        <option value="Growth">Growth</option>
-        <option value="Systems">Systems</option>
+        <option value="Inbox">Inbox</option>
+        <option value="Branding &amp; Marketing">Branding &amp; Marketing</option>
         <option value="Compliance">Compliance</option>
+        <option value="Digital">Digital</option>
+        <option value="Finance">Finance</option>
+        <option value="Management">Management</option>
+        <option value="Patient Related">Patient Related</option>
+        <option value="Research &amp; Study">Research &amp; Study</option>
+        <option value="Stationary">Stationary</option>
       </select>
       <select class="sel" id="sel-status">
         <option value="All">All</option>
@@ -401,14 +408,16 @@ select.fi:hover { background-color:var(--surface-low); }
       <div class="fg"><label class="flbl">Task</label><input class="fi big" type="text" id="f-task" placeholder="What needs to get done?"/></div>
       <div class="fg"><label class="flbl">Category</label>
         <select class="fi sel" id="f-cat">
-          <option>Clinical</option><option>Finance</option><option>Operations</option>
-          <option>Growth</option><option>Systems</option><option>Compliance</option>
+          <option>Inbox</option>
+          <option>Branding &amp; Marketing</option><option>Compliance</option><option>Digital</option>
+          <option>Finance</option><option>Management</option><option>Patient Related</option>
+          <option>Research &amp; Study</option><option>Stationary</option>
         </select>
       </div>
       <!-- Rating buttons (1–5) replace sliders — 2x2 grid to save vertical space -->
       <div class="frow fg">
         <div class="fslider" style="margin-bottom:0">
-          <div class="fslider-top"><span class="fslider-k">Urgency</span></div>
+          <div class="fslider-top"><span class="fslider-k" id="fk-urgency">Urgency</span></div>
           <div class="rate-group" id="grp-urgency">
             <button type="button" class="rate-btn" data-v="1" onclick="setRate('urgency',1)">1</button>
             <button type="button" class="rate-btn" data-v="2" onclick="setRate('urgency',2)">2</button>
@@ -419,7 +428,7 @@ select.fi:hover { background-color:var(--surface-low); }
           <input type="hidden" id="f-urgency" value="3">
         </div>
         <div class="fslider" style="margin-bottom:0">
-          <div class="fslider-top"><span class="fslider-k">Risk</span></div>
+          <div class="fslider-top"><span class="fslider-k" id="fk-risk">Risk</span></div>
           <div class="rate-group" id="grp-risk">
             <button type="button" class="rate-btn" data-v="1" onclick="setRate('risk',1)">1</button>
             <button type="button" class="rate-btn" data-v="2" onclick="setRate('risk',2)">2</button>
@@ -432,7 +441,7 @@ select.fi:hover { background-color:var(--surface-low); }
       </div>
       <div class="frow fg">
         <div class="fslider" style="margin-bottom:0">
-          <div class="fslider-top"><span class="fslider-k">Impact</span></div>
+          <div class="fslider-top"><span class="fslider-k" id="fk-impact">Impact</span></div>
           <div class="rate-group" id="grp-impact">
             <button type="button" class="rate-btn" data-v="1" onclick="setRate('impact',1)">1</button>
             <button type="button" class="rate-btn" data-v="2" onclick="setRate('impact',2)">2</button>
@@ -443,7 +452,7 @@ select.fi:hover { background-color:var(--surface-low); }
           <input type="hidden" id="f-impact" value="3">
         </div>
         <div class="fslider" style="margin-bottom:0">
-          <div class="fslider-top"><span class="fslider-k">Effort</span></div>
+          <div class="fslider-top"><span class="fslider-k" id="fk-effort">Effort</span></div>
           <div class="rate-group" id="grp-effort">
             <button type="button" class="rate-btn" data-v="1" onclick="setRate('effort',1)">1</button>
             <button type="button" class="rate-btn" data-v="2" onclick="setRate('effort',2)">2</button>
@@ -462,7 +471,7 @@ select.fi:hover { background-color:var(--surface-low); }
     </div>
     <div class="m-foot">
       <button class="btn r" id="m-delete" style="display:none;margin-right:auto">Delete</button>
-      <button class="btn" id="m-cancel">Cancel</button>
+      <button class="btn" id="m-cancel">Done</button>
       <button class="btn dk" id="m-save">Add Task</button>
     </div>
   </div>
@@ -527,10 +536,20 @@ const firebaseConfig = {
     appId: "1:167122060709:web:89ff7ba3bbe7747825544c",
     measurementId: "G-CESNVVN03Z"
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-try { db.enablePersistence().catch(() => {}); } catch {} // offline cache; ignore if multiple tabs open / unsupported
-const taskDocRef = db.collection('flosswork').doc('shared');
+// Defensive init — if Firebase fails to load (CDN blocked, no network on
+// first visit, bad config) the app must still fully work off localStorage.
+let firebaseReady = false, db = null, taskDocRef = null;
+try {
+  if (typeof firebase !== 'undefined') {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    try { db.enablePersistence().catch(() => {}); } catch {} // offline cache; ignore if multiple tabs open / unsupported
+    taskDocRef = db.collection('flosswork').doc('shared');
+    firebaseReady = true;
+  }
+} catch (err) {
+  console.error('Firebase init failed — running in local-only offline mode:', err);
+}
 let lastSyncedJSON = null; // guards against re-saving our own writes when they echo back
 
 /* ══════════════════════════════════════════════════════════
@@ -545,16 +564,16 @@ let lastSyncedJSON = null; // guards against re-saving our own writes when they 
            category, dueDate, onToday
    ══════════════════════════════════════════════════════════ */
 const SEED = [
-  { id:1,  title:'GMB SE flosswork',                done:false, urgency:5, impact:5, risk:5, effort:4, category:'Growth',     dueDate:'', onToday:true  },
-  { id:2,  title:'Update expense file',              done:false, urgency:5, impact:5, risk:5, effort:4, category:'Finance',    dueDate:'', onToday:true  },
-  { id:3,  title:'Order flosswork raipur',           done:false, urgency:5, impact:5, risk:4, effort:2, category:'Finance',    dueDate:'', onToday:false },
-  { id:4,  title:'Structure Notion',                 done:true,  urgency:5, impact:5, risk:4, effort:3, category:'Systems',    dueDate:'', onToday:false },
-  { id:5,  title:'Renegotiate toothsi contract',     done:true,  urgency:5, impact:5, risk:5, effort:5, category:'Compliance', dueDate:'', onToday:false },
-  { id:6,  title:'Order dentalkart',                 done:true,  urgency:5, impact:5, risk:3, effort:2, category:'Finance',    dueDate:'', onToday:false },
-  { id:7,  title:'Clinic expense entry',             done:true,  urgency:4, impact:4, risk:5, effort:3, category:'Operations', dueDate:'', onToday:false },
-  { id:8,  title:'Toothsi coco airtable update',     done:true,  urgency:4, impact:5, risk:4, effort:4, category:'Finance',    dueDate:'', onToday:false },
-  { id:9,  title:'Implant case selection criteria',  done:false, urgency:4, impact:5, risk:3, effort:2, category:'Clinical',   dueDate:'', onToday:true  },
-  { id:10, title:'Daily diary with task integration',done:false, urgency:4, impact:5, risk:3, effort:2, category:'Operations', dueDate:'', onToday:false },
+  { id:1,  title:'GMB SE flosswork',                done:false, urgency:5, impact:5, risk:5, effort:4, category:'Branding & Marketing', dueDate:'', onToday:true  },
+  { id:2,  title:'Update expense file',              done:false, urgency:5, impact:5, risk:5, effort:4, category:'Finance',             dueDate:'', onToday:true  },
+  { id:3,  title:'Order flosswork raipur',           done:false, urgency:5, impact:5, risk:4, effort:2, category:'Finance',             dueDate:'', onToday:false },
+  { id:4,  title:'Structure Notion',                 done:true,  urgency:5, impact:5, risk:4, effort:3, category:'Digital',             dueDate:'', onToday:false },
+  { id:5,  title:'Renegotiate toothsi contract',     done:true,  urgency:5, impact:5, risk:5, effort:5, category:'Compliance',          dueDate:'', onToday:false },
+  { id:6,  title:'Order dentalkart',                 done:true,  urgency:5, impact:5, risk:3, effort:2, category:'Finance',             dueDate:'', onToday:false },
+  { id:7,  title:'Clinic expense entry',             done:true,  urgency:4, impact:4, risk:5, effort:3, category:'Management',          dueDate:'', onToday:false },
+  { id:8,  title:'Toothsi coco airtable update',     done:true,  urgency:4, impact:5, risk:4, effort:4, category:'Finance',             dueDate:'', onToday:false },
+  { id:9,  title:'Implant case selection criteria',  done:false, urgency:4, impact:5, risk:3, effort:2, category:'Patient Related',     dueDate:'', onToday:true  },
+  { id:10, title:'Daily diary with task integration',done:false, urgency:4, impact:5, risk:3, effort:2, category:'Management',          dueDate:'', onToday:false },
 ];
 
 /* ══════════════════════════════════════════════════════════
@@ -566,10 +585,13 @@ const CFG = {
   storageKey: 'fw_tasks_v1',      // localStorage key (change if resetting all users)
   score: {
     weights: {
-      impact:  0.40,              // Impact weight  (must sum with urgency + effort = 1.0)
-      urgency: 0.35,              // Urgency weight
-      effort:  0.25,              // Effort penalty weight (inverted: high effort = lower score)
+      urgency: 0.35,              // Urgency weight — highest
+      risk:    0.25,              // Risk weight    — 2nd
+      impact:  0.25,              // Impact weight  — tied 2nd with risk
+      effort:  0.15,              // Effort penalty weight (inverted: high effort = lower score) — lowest
       effortBase: 6,              // Effort inversion base (score = effortBase - effort value)
+      // Weights must sum to 1.0
+      // (0.35 + 0.25 + 0.25 + 0.15 = 1.0)
     },
     thresholds: {
       high: 80,                   // Score ≥ high → "High priority" / green badge
@@ -589,18 +611,21 @@ const CFG = {
    ══════════════════════════════════════════════════════════ */
 // Category color-coding removed by design — all categories use the same neutral tag.
 const TAG_CAT = {
-  'Clinical':   'white',
-  'Finance':    'white',
-  'Operations': 'white',
-  'Growth':     'white',
-  'Systems':    'white',
-  'Compliance': 'white',
+  'Inbox':                'white',
+  'Branding & Marketing': 'white',
+  'Compliance':           'white',
+  'Digital':              'white',
+  'Finance':              'white',
+  'Management':           'white',
+  'Patient Related':      'white',
+  'Research & Study':     'white',
+  'Stationary':           'white',
 };
 // Risk thresholds use the same values as CFG.score.thresholds isn't right—
 // risk is 1–5 independently. Edit these thresholds to change when risk turns red.
 const RISK = {
-  high: 4,    // risk >= high → coral/red tag
-  mid:  3,    // risk >= mid  → orange tag; below → gray
+  high: 5,    // risk >= high → coral/red tag   (5 = High)
+  mid:  3,    // risk >= mid  → orange tag; below → gray  (3-4 = Med, 1-2 = Low)
 };
 
 /* ══════════════════════════════════════════════════════════
@@ -608,7 +633,7 @@ const RISK = {
    ══════════════════════════════════════════════════════════ */
 function calcScore(t) {
   const w = CFG.score.weights;
-  const raw = (t.impact * w.impact) + (t.urgency * w.urgency) + ((w.effortBase - t.effort) * w.effort);
+  const raw = (t.urgency * w.urgency) + (t.risk * w.risk) + (t.impact * w.impact) + ((w.effortBase - t.effort) * w.effort);
   return Math.round(raw * CFG.score.scale);
 }
 function scoreLbl(s) {
@@ -618,6 +643,16 @@ function scoreLbl(s) {
 function scoreCls(s) {
   const { high, mid } = CFG.score.thresholds;
   return s >= high ? 'hi' : s >= mid ? 'md' : 'lo';
+}
+function scoreRingColor(s) {
+  const cls = scoreCls(s);
+  return cls === 'hi' ? 'var(--success)' : cls === 'md' ? 'var(--warning)' : 'var(--muted)';
+}
+function scoreBadge(t, size) {
+  const pct = Math.max(0, Math.min(100, t.score));
+  return `<div class="score-ring" style="--pct:${pct};--ring-c:${scoreRingColor(t.score)}">
+    <div class="score ${size} ${scoreCls(t.score)}"><span class="score-n">${t.score}</span><span class="score-l">score</span></div>
+  </div>`;
 }
 function riskCls(r) { return r >= RISK.high ? 'coral' : r >= RISK.mid ? 'orange' : 'gray'; }
 function riskTxt(r) { return r >= RISK.high ? '⚑ High Risk' : r >= RISK.mid ? '⚑ Med Risk' : '⚑ Low Risk'; }
@@ -638,23 +673,32 @@ function load() {
   // Instant local paint (cache or seed) while Firestore connects.
   try {
     const d = JSON.parse(localStorage.getItem(CFG.storageKey));
-    if (d) { tasks = d.t; nid = d.n || 11; }
+    if (d) { tasks = d.t; nid = d.n || 11; focusTaskId = d.f ?? null; }
     else seed();
   } catch { seed(); }
   paint();
 
+  // No working Firestore connection — the app just runs off localStorage
+  // (already loaded above). Nothing more to wire up.
+  if (!firebaseReady) { setOfflineBadge(true); return; }
+
   // Firestore is the source of truth once connected — realtime sync
   // across every tab/device pointed at the same project.
   taskDocRef.onSnapshot(snap => {
+    setOfflineBadge(false);
     if (!snap.exists) { render(); return; } // first run: push local/seed data up
     const d = snap.data();
-    const json = JSON.stringify({ t: d.t, n: d.n });
+    const json = JSON.stringify({ t: d.t, n: d.n, f: d.f ?? null });
     if (json === lastSyncedJSON) return; // echo of our own write, already applied
     lastSyncedJSON = json;
     tasks = d.t || [];
     nid = d.n || 11;
+    focusTaskId = d.f ?? null;
     render();
-  }, err => { console.error('Firestore sync error:', err); toast('Offline — using local copy'); });
+  }, err => {
+    console.error('Firestore sync error — falling back to local copy:', err);
+    setOfflineBadge(true);
+  });
 }
 function seed() { tasks = SEED.map(t => ({ ...t, score: calcScore(t) })); }
 function paint() {
@@ -663,12 +707,24 @@ function paint() {
   if (curView === 'focus')   renderFocus();
 }
 function save() {
-  try { localStorage.setItem(CFG.storageKey, JSON.stringify({ t: tasks, n: nid })); } catch {}
-  const payload = { t: tasks, n: nid };
+  try { localStorage.setItem(CFG.storageKey, JSON.stringify({ t: tasks, n: nid, f: focusTaskId })); } catch {}
+  if (!firebaseReady) return; // local-only mode — localStorage above is the only copy
+  const payload = { t: tasks, n: nid, f: focusTaskId };
   const json = JSON.stringify(payload);
   if (json === lastSyncedJSON) return; // nothing changed since last sync
   lastSyncedJSON = json;
-  taskDocRef.set(payload).catch(err => console.error('Firestore save failed:', err));
+  try {
+    taskDocRef.set(payload).catch(err => { console.error('Firestore save failed:', err); setOfflineBadge(true); });
+  } catch (err) {
+    console.error('Firestore save threw:', err);
+    setOfflineBadge(true);
+  }
+}
+function setOfflineBadge(offline) {
+  const el = document.getElementById('offline-badge');
+  if (!el) return;
+  el.classList.toggle('off', offline);
+  el.textContent = offline ? '⚠ Offline' : '● Online';
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -676,6 +732,9 @@ function save() {
    ══════════════════════════════════════════════════════════ */
 function esc(s)    { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function today()   { return new Date().toISOString().split('T')[0]; }
+function todayLong() {
+  return new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
 function fdate(d)  {
   if (!d) return '';
   const [, m, dy] = d.split('-');
@@ -716,14 +775,14 @@ function focusStyleCard(t, ctx) {
   const btns = ctx === 'focus'
     ? `<button class="btn y" style="flex:4 1 0%" onclick="focusDone(${t.id})">✓ Mark as Done</button>
        <button class="btn" style="flex:1 1 0%" onclick="clearFocus()">Remove</button>`
-    : `<button class="btn" onclick="event.stopPropagation();moveToFocus(${t.id})">Focus</button>
+    : `<button class="btn" onclick="event.stopPropagation();moveToFocus(${t.id})">← Focus</button>
        <button class="btn y" onclick="event.stopPropagation();markDone(${t.id})">✓ Mark as Done</button>
        <button class="btn" onclick="event.stopPropagation();removeFromToday(${t.id})">Remove</button>`;
   return `
   <div class="focus-card" style="margin-bottom:8px">
     <div class="focus-hd">
       <span class="focus-hd-title">${esc(t.title)}</span>
-      <div class="score lg ${scoreCls(t.score)}"><span class="score-n">${t.score}</span><span class="score-l">score</span></div>
+      ${scoreBadge(t, 'lg')}
     </div>
     <div class="focus-body">
       <div class="tags" style="margin-bottom:8px">${tagsHtml}</div>
@@ -809,11 +868,11 @@ function renderFocus() {
   wrap.innerHTML = focusStyleCard(t, 'focus');
 }
 
-function clearFocus() { focusTaskId = null; renderFocus(); }
+function clearFocus() { focusTaskId = null; renderFocus(); save(); }
 function focusDone(id) {
   tasks = tasks.map(t => t.id === id ? { ...t, done: true, doneAt: Date.now() } : t);
-  toast('Done ✓'); save();
   focusTaskId = null;
+  toast('Done ✓'); save();
   renderFocus(); renderToday();
 }
 
@@ -896,8 +955,10 @@ function blRow(t) {
     </div>
     ${isDone
       ? `<button class="btn g" onclick="event.stopPropagation();undoDone(${t.id})" style="font-size:11px;padding:6px 12px">Reopen</button>`
-      : `<button class="btn y" onclick="event.stopPropagation();markDone(${t.id})" style="font-size:11px;padding:6px 12px">Done</button>`}
-    <div class="score sm ${scoreCls(t.score)}"><span class="score-n">${t.score}</span><span class="score-l">score</span></div>
+      : onT
+        ? `<button class="btn y" onclick="event.stopPropagation();removeFromToday(${t.id})" title="Restore to backlog" style="font-size:14px;padding:6px 12px">↺</button>`
+        : `<button class="btn y" onclick="event.stopPropagation();addToToday(${t.id})" style="font-size:11px;padding:6px 12px">← Active</button>`}
+    ${scoreBadge(t, 'sm')}
   </div>`;
 }
 
@@ -906,7 +967,13 @@ function blRow(t) {
    ══════════════════════════════════════════════════════════ */
 function markDone(id)        { tasks = tasks.map(t => t.id === id ? { ...t, done: true, doneAt: Date.now() } : t); toast('Done ✓');             render(); }
 function undoDone(id)        { tasks = tasks.map(t => t.id === id ? { ...t, done: false, doneAt: null } : t); toast('Reopened');           render(); }
-function delTask(id)         { if (!confirm('Delete this task?')) return; tasks = tasks.filter(t => t.id !== id); toast('Deleted');    render(); }
+function delTask(id) {
+  if (!confirm('Delete this task?')) return false;
+  tasks = tasks.filter(t => t.id !== id);
+  toast('Deleted');
+  try { render(); } catch (err) { console.error('Render/save failed after delete:', err); }
+  return true;
+}
 function removeFromToday(id) { tasks = tasks.map(t => t.id === id ? { ...t, onToday: false }         : t); toast('Removed from Today'); render(); }
 function addToToday(id) {
   const n = tasks.filter(t => t.onToday && !t.done).length;
@@ -924,7 +991,6 @@ function moveToFocus(id) {
    ══════════════════════════════════════════════════════════ */
 function openPromo(ctx) {
   promoCtx = ctx || 'today';
-  document.getElementById('promo-hd').classList.toggle('green', promoCtx === 'focus');
   txt('promo-ey', promoCtx === 'focus' ? 'Add to Focus' : 'Add to Today');
   txt('promo-title', promoCtx === 'focus' ? 'Pick from Active' : 'Pick from Tasks');
   const avail = promoCtx === 'focus'
@@ -974,7 +1040,8 @@ function openAdd() {
   txt('m-ey', 'New Task'); txt('m-t', 'Add to Tasks');
   document.getElementById('m-save').textContent = 'Add Task';
   document.getElementById('m-delete').style.display = 'none';
-  gf('task', ''); gf('cat', 'Clinical');
+  document.getElementById('m-cancel').style.display = 'none';
+  gf('task', ''); gf('cat', 'Inbox');
   ['impact','urgency','effort','risk'].forEach(k => sr(k, 3));
   gf('due', '');
   up(); openModal();
@@ -985,6 +1052,7 @@ function openEdit(id) {
   txt('m-ey', 'Edit Task'); txt('m-t', 'Update this task');
   document.getElementById('m-save').textContent = 'Save Changes';
   document.getElementById('m-delete').style.display = '';
+  document.getElementById('m-cancel').style.display = t.done ? 'none' : '';
   gf('task', t.title); gf('cat', t.category);
   ['impact','urgency','effort','risk'].forEach(k => sr(k, t[k]));
   gf('due', t.dueDate || '');
@@ -1011,7 +1079,14 @@ function unlockScroll() {
     document.body.style.top = '';
     document.body.style.left = '';
     document.body.style.right = '';
-    window.scrollTo(0, scrollLockY);
+    // iOS Safari can under-report the page's scrollable height right after
+    // un-fixing the body (especially if content changed while locked, e.g.
+    // marking a task done from the modal). Force a reflow and restore the
+    // scroll position on the next frame so the browser has recalculated
+    // the real content height first — otherwise the page can appear to
+    // "stop" scrolling short of the actual bottom of the content.
+    void document.body.offsetHeight;
+    requestAnimationFrame(() => window.scrollTo(0, scrollLockY));
   }
 }
 function openModal()  { document.getElementById('ov').classList.add('on'); lockScroll(); setTimeout(() => document.getElementById('f-task').focus(), 80); }
@@ -1027,7 +1102,7 @@ function sr(k, v)   {
 // Rating button click handler (1–5 buttons replace the old range sliders)
 function setRate(field, v) {
   sr(field, v);
-  if (field === 'impact' || field === 'urgency' || field === 'effort') up();
+  if (field === 'impact' || field === 'urgency' || field === 'effort' || field === 'risk') up();
 }
 
 // Live score preview in modal
@@ -1036,6 +1111,7 @@ function up() {
     impact:  +document.getElementById('f-impact').value,
     urgency: +document.getElementById('f-urgency').value,
     effort:  +document.getElementById('f-effort').value,
+    risk:    +document.getElementById('f-risk').value,
   });
   document.getElementById('sp-num').textContent  = s;
   document.getElementById('sp-note').textContent = scoreLbl(s);
@@ -1068,12 +1144,13 @@ document.getElementById('m-save').addEventListener('click', () => {
 
 document.getElementById('add-btn').addEventListener('click', openAdd);
 document.getElementById('m-cl').addEventListener('click', closeModal);
-document.getElementById('m-cancel').addEventListener('click', closeModal);
+document.getElementById('m-cancel').addEventListener('click', () => {
+  try { if (eid !== null) markDone(eid); }
+  finally { closeModal(); }
+});
 document.getElementById('m-delete').addEventListener('click', () => {
   if (eid === null) return;
-  const before = tasks.length;
-  delTask(eid);
-  if (tasks.length < before) closeModal();
+  if (delTask(eid)) closeModal();
 });
 document.getElementById('ov').addEventListener('click', e => { if (e.target === document.getElementById('ov')) closeModal(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closePromo(); } });
@@ -1105,6 +1182,14 @@ if ('serviceWorker' in navigator) {
 /* ══════════════════════════════════════════════════════════
    INIT
    ══════════════════════════════════════════════════════════ */
+txt('wm-date', todayLong());
+(() => {
+  const w = CFG.score.weights;
+  txt('fk-urgency', `Urgency (${Math.round(w.urgency * 100)}%)`);
+  txt('fk-risk',    `Risk (${Math.round(w.risk * 100)}%)`);
+  txt('fk-impact',  `Impact (${Math.round(w.impact * 100)}%)`);
+  txt('fk-effort',  `Effort (${Math.round(w.effort * 100)}%)`);
+})();
 load();
 </script>
 </body>
