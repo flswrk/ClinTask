@@ -367,8 +367,8 @@ select.fi:hover { background-color:var(--surface-low); }
       <div class="divider"></div>
       <button class="srt" id="s-reset" onclick="resetFilters()">Reset</button>
       <div class="divider"></div>
-      <button class="srt on" id="s-score" onclick="setSort('score')">Score</button>
-      <button class="srt"    id="s-due"   onclick="setSort('due')">Due</button>
+      <button class="srt on" id="s-score" onclick="setSort('score')">Score<span class="srt-arrow" id="arr-score"> ▼</span></button>
+      <button class="srt"    id="s-due"   onclick="setSort('due')">Due<span class="srt-arrow" id="arr-due"></span></button>
       <span class="fcnt" id="fcnt"></span>
     </div>
   </div>
@@ -575,9 +575,9 @@ const CFG = {
       // (0.35 + 0.25 + 0.25 + 0.15 = 1.0)
     },
     thresholds: {
-      high: 80,                   // Score ≥ high → "High priority" / green badge
-      mid:  60,                   // Score ≥ mid  → "Moderate priority" / yellow badge
-                                  // Score < mid  → "Low priority" / gray badge
+      high: 70,                   // Score ≥ 70   → "High priority" / green badge
+      mid:  41,                   // Score 41-69  → "Moderate priority" / yellow badge
+                                  // Score ≤ 40   → "Low priority" / gray badge
     },
     scale: 20,                    // Multiply normalized score by this (20 → max 100)
   },
@@ -644,7 +644,8 @@ function riskTxt(r) { return r >= RISK.high ? '⚑ High Risk' : r >= RISK.mid ? 
    ══════════════════════════════════════════════════════════ */
 let tasks = [], nid = 11;
 // Filter / sort state
-let catF = 'All', statusF = 'All', sortBy = 'score';
+let catF = 'All', statusF = 'All', sortBy = 'score', sortDir = 1; // sortDir: 1 = default direction for this sort, -1 = inverted
+const SORT_DEFAULT_DESC = { score: true, name: false, due: false }; // whether dir=1 means descending for each sort key
 // UI state
 let eid = null, curView = 'focus', focusTaskId = null, promoCtx = 'today';
 
@@ -840,12 +841,12 @@ function renderBacklog() {
   });
 
   // Sort
-  all.sort((a, b) =>
+  all.sort((a, b) => sortDir * (
     sortBy === 'score' ? b.score - a.score :
     sortBy === 'name'  ? a.title.localeCompare(b.title) :
     !a.dueDate && !b.dueDate ? 0 : !a.dueDate ? 1 : !b.dueDate ? -1 :
     a.dueDate.localeCompare(b.dueDate)
-  );
+  ));
 
   const active = all.filter(t => !t.done);
   const done   = all.filter(t => t.done)
@@ -962,15 +963,27 @@ document.getElementById('ov2').addEventListener('click', e => { if (e.target ===
 document.getElementById('sel-cat').addEventListener('change',    e => { catF    = e.target.value; renderBacklog(); });
 document.getElementById('sel-status').addEventListener('change', e => { statusF = e.target.value; renderBacklog(); });
 function setSort(s) {
-  sortBy = s;
-  ['score','name','due'].forEach(k => document.getElementById('s-' + k)?.classList.toggle('on', k === s));
+  if (sortBy === s) { sortDir *= -1; } else { sortBy = s; sortDir = 1; }
+  updateSortUI();
   renderBacklog();
 }
+function updateSortUI() {
+  ['score','name','due'].forEach(k => {
+    document.getElementById('s-' + k)?.classList.toggle('on', k === sortBy);
+    const arr = document.getElementById('arr-' + k);
+    if (!arr) return;
+    if (k !== sortBy) { arr.textContent = ''; return; }
+    const defaultDesc = SORT_DEFAULT_DESC[k];
+    const isDesc = sortDir === 1 ? defaultDesc : !defaultDesc;
+    arr.textContent = isDesc ? ' ▼' : ' ▲';
+  });
+}
 function resetFilters() {
-  catF = 'All'; statusF = 'All';
+  catF = 'All'; statusF = 'All'; sortBy = 'score'; sortDir = 1;
   document.getElementById('sel-cat').value = 'All';
   document.getElementById('sel-status').value = 'All';
-  setSort('score');
+  updateSortUI();
+  renderBacklog();
 }
 
 /* ══════════════════════════════════════════════════════════
