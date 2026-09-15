@@ -214,6 +214,11 @@ button { cursor:pointer; }
 .focus-btns  { display:flex; gap:8px; flex-wrap:wrap; }
 .focus-btns .btn { flex:1 1 auto; min-width:0; text-align:center; padding:7px 14px; }
 
+/* JEWEL — saturated per-slot card identity (Indigo/Teal/Plum) */
+.focus-card.jewel { border-color:transparent; --outline-variant: rgba(255,255,255,.28); }
+.focus-card.jewel .focus-hd { background:transparent; }
+.focus-card.jewel .focus-hd-title { color:#fff; }
+
 /* ── BACKLOG VIEW ──────────────────────────────────────── */
 .fbar { border-bottom:1px solid var(--outline-variant); background:var(--surface-lowest); position:sticky; top:60px; z-index:40; }
 .fbar-in { max-width:980px; margin:0 auto; padding:10px 20px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
@@ -603,6 +608,12 @@ const TAG_CAT = {
   'Shopping':             'white',
   'Stationary':           'white',
 };
+// Active/Focus card identity colors, one per slot (1st, 2nd, 3rd task by
+// rank) — not tied to a specific task, so a card's color stays fixed to
+// its position even as tasks move in/out of that slot. Slot 0 (Indigo)
+// is also used for the single Focus-tab card.
+const CARD_COLORS = ['#2F3F72', '#1F6F6B', '#5B4B8A']; // Indigo, Teal, Plum
+
 // Risk thresholds use the same values as CFG.score.thresholds isn't right—
 // risk is 1–5 independently. Edit these thresholds to change when risk turns red.
 const RISK = {
@@ -749,7 +760,7 @@ function render() {
 /* ══════════════════════════════════════════════════════════
    RENDER — TODAY
    ══════════════════════════════════════════════════════════ */
-function focusStyleCard(t, ctx) {
+function focusStyleCard(t, ctx, idx = 0) {
   const ov = t.dueDate && t.dueDate < today();
   const tagsHtml = `
     <span class="tag ${riskCls(t.risk)}">${riskTxt(t.risk)}</span>
@@ -761,8 +772,9 @@ function focusStyleCard(t, ctx) {
     : `<button class="btn" onclick="event.stopPropagation();moveToFocus(${t.id})">← Focus</button>
        <button class="btn y" onclick="event.stopPropagation();markDone(${t.id})">✓ Mark as Done</button>
        <button class="btn" onclick="event.stopPropagation();removeFromToday(${t.id})">Remove</button>`;
+  const bg = CARD_COLORS[idx % CARD_COLORS.length];
   return `
-  <div class="focus-card" style="margin-bottom:8px">
+  <div class="focus-card jewel" style="margin-bottom:8px;background:${bg}">
     <div class="focus-hd">
       <span class="focus-hd-title">${esc(t.title)}</span>
       ${scoreBadge(t, 'lg')}
@@ -780,8 +792,8 @@ function renderToday() {
 
   let html = '';
 
-  // Active today cards, focus-card style
-  active.forEach(t => { html += focusStyleCard(t, 'today'); });
+  // Active today cards, focus-card style — colored by slot position
+  active.forEach((t, i) => { html += focusStyleCard(t, 'today', i); });
 
   // Empty slots up to maxToday (done tasks don't consume a slot — matches addToToday's cap)
   for (let i = active.length; i < CFG.maxToday; i++) {
@@ -817,7 +829,7 @@ function renderFocus() {
     </div>`;
     return;
   }
-  wrap.innerHTML = focusStyleCard(t, 'focus');
+  wrap.innerHTML = focusStyleCard(t, 'focus', 0); // always Indigo — the Focus tab always shows the top slot
 }
 
 function clearFocus() { focusTaskId = null; renderFocus(); save(); }
