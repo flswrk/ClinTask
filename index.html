@@ -934,6 +934,11 @@ function paint() {
   renderToday();
   if (curView === 'backlog') renderBacklog();
   if (curView === 'focus')   renderFocus();
+  // Re-measure the reserved bottom clearance on every repaint — cheap, and
+  // closes any gap where the nav bar's real height could drift from what
+  // was measured at load (long labels wrapping, safe-area changes, etc.),
+  // which otherwise leaves the last row of a list hidden behind the nav.
+  if (typeof syncNavHeight === 'function') syncNavHeight();
 }
 function save() {
   try { localStorage.setItem(CFG.storageKey, JSON.stringify({ t: tasks, n: nid, f: focusTaskId })); } catch {}
@@ -986,6 +991,7 @@ function go(v) {
   if (v === 'today')   renderToday();
   if (v === 'focus')   renderFocus();
   if (v === 'backlog') renderBacklog();
+  syncNavHeight(); // re-measure on every tab switch too, not just on paint()
 }
 function render() {
   paint();
